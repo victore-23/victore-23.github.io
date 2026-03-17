@@ -1,39 +1,543 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My Data Viz Site</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SF Crime: Two Decades of Data</title>
+
+  <style>
+    :root {
+      --bg: #1a1a2e;
+      --bg-soft: #22243b;
+      --card: #242741;
+      --card-hover: #2d3152;
+      --text: #eef2ff;
+      --muted: #b6bfdc;
+      --accent: #16c79a;
+      --accent-2: #7ce7cc;
+      --border: rgba(255, 255, 255, 0.08);
+      --shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+      --radius: 20px;
+      --max-width: 1200px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(22, 199, 154, 0.14), transparent 28%),
+        radial-gradient(circle at top right, rgba(124, 231, 204, 0.08), transparent 24%),
+        linear-gradient(180deg, #161625 0%, var(--bg) 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      backdrop-filter: blur(12px);
+      background: rgba(26, 26, 46, 0.82);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand {
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      color: var(--accent-2);
+      white-space: nowrap;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      font-size: 0.95rem;
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent);
+    }
+
+    .hero {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 88px 24px 56px;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 32px;
+      align-items: center;
+    }
+
+    .hero-text h1 {
+      margin: 0 0 18px;
+      font-size: clamp(2.5rem, 6vw, 4.8rem);
+      line-height: 1.05;
+      letter-spacing: -1.5px;
+    }
+
+    .hero-text .accent {
+      color: var(--accent);
+    }
+
+    .hero-text p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 1.08rem;
+      max-width: 700px;
+    }
+
+    .hero-buttons {
+      margin-top: 26px;
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 13px 20px;
+      border-radius: 999px;
+      font-weight: 700;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0f1720;
+      box-shadow: 0 10px 24px rgba(22, 199, 154, 0.22);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px rgba(22, 199, 154, 0.28);
+    }
+
+    .btn-secondary {
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .hero-panel {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025));
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-panel h3 {
+      margin: 0 0 14px;
+      font-size: 1.15rem;
+      color: var(--accent-2);
+    }
+
+    .hero-panel ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+
+    .hero-panel li + li {
+      margin-top: 10px;
+    }
+
+    .section {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 26px 24px 70px;
+    }
+
+    .section-header {
+      margin-bottom: 24px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--accent);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+    }
+
+    .section h2 {
+      margin: 0 0 10px;
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      line-height: 1.15;
+    }
+
+    .section-header p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 760px;
+    }
+
+    .feature-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.025));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .feature-card-content {
+      padding: 24px;
+    }
+
+    .feature-card h3 {
+      margin: 0 0 10px;
+      font-size: 1.4rem;
+    }
+
+    .feature-card p {
+      margin: 0 0 18px;
+      color: var(--muted);
+    }
+
+    .feature-image-wrap {
+      padding: 18px;
+      background: rgba(255, 255, 255, 0.02);
+      border-top: 1px solid var(--border);
+    }
+
+    .feature-image {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.025));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      background: var(--card-hover);
+      border-color: rgba(22, 199, 154, 0.35);
+    }
+
+    .card-tag {
+      display: inline-block;
+      margin-bottom: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(22, 199, 154, 0.12);
+      color: var(--accent-2);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 1.35rem;
+    }
+
+    .card p {
+      margin: 0 0 18px;
+      color: var(--muted);
+    }
+
+    .card-links {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .text-link {
+      color: var(--accent-2);
+      font-weight: 700;
+    }
+
+    .text-link:hover {
+      color: var(--accent);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
+
+    .about-box {
+      background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.025));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .about-box h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: var(--accent-2);
+    }
+
+    .about-box p,
+    .about-box li {
+      color: var(--muted);
+    }
+
+    .about-box ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      margin-top: 20px;
+    }
+
+    .footer-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 24px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        padding-top: 64px;
+      }
+
+      .grid,
+      .about-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .nav-inner {
+        padding: 12px 18px;
+      }
+
+      .hero,
+      .section {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .hero-text h1 {
+        letter-spacing: -1px;
+      }
+
+      .card,
+      .feature-card-content,
+      .about-box,
+      .hero-panel {
+        padding: 20px;
+      }
+
+      .feature-image-wrap {
+        padding: 12px;
+      }
+    }
+  </style>
 </head>
-
 <body>
-    <h1>My Data Visualization Site</h1>
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="brand">SF Crime Portfolio</div>
+      <div class="nav-links">
+        <a href="#overview">Overview</a>
+        <a href="#featured">Featured Figure</a>
+        <a href="#visualizations">Visualizations</a>
+        <a href="#about">About</a>
+      </div>
+    </div>
+  </nav>
 
-    <p>Welcome! This site contains visualizations about crime and data analysis.</p>
+  <header class="hero" id="overview">
+    <div class="hero-text">
+      <div class="eyebrow">Data Science Portfolio</div>
+      <h1>SF Crime:<br><span class="accent">Two Decades of Data</span></h1>
+      <p>
+        This project explores crime-related patterns through visual storytelling, combining static analysis
+        with interactive visualizations built from San Francisco data.
+      </p>
+      <p>
+        The site highlights relationships in the data, geographic variation across districts, and visual tools
+        that make the trends easier to explore.
+      </p>
 
-    <!-- ===================== -->
-    <!-- STATIC IMAGE -->
-    <!-- ===================== -->
-    <h2>Static Visualization (Pearson Correlation)</h2>
-    <img src="images/Pearson_correlation.png" alt="Correlation Plot" width="600">
+      <div class="hero-buttons">
+        <a class="btn btn-primary" href="#visualizations">Explore Visualizations</a>
+        <a class="btn btn-secondary" href="#featured">View Featured Figure</a>
+      </div>
+    </div>
 
-    <!-- ===================== -->
-    <!-- INTERACTIVE VIS 1 -->
-    <!-- ===================== -->
-    <h2>Drug Heatmap</h2>
-    <p>
-        <a href="visualizations/drug_heatmap.html" target="_blank">
-            Open Drug Heatmap
-        </a>
-    </p>
+    <div class="hero-panel">
+      <h3>What’s included</h3>
+      <ul>
+        <li>A polished static figure showing Pearson correlation patterns.</li>
+        <li>An interactive drug heatmap for category-based exploration.</li>
+        <li>A district ratio visualization for comparing patterns across San Francisco.</li>
+      </ul>
+    </div>
+  </header>
 
-    <!-- ===================== -->
-    <!-- INTERACTIVE VIS 2 -->
-    <!-- ===================== -->
-    <h2>SF District Ratio</h2>
-    <p>
-        <a href="visualizations/sf_district_ratio.html" target="_blank">
-            Open SF District Ratio Visualization
-        </a>
-    </p>
+  <main>
+    <section class="section" id="featured">
+      <div class="section-header">
+        <div class="eyebrow">Featured Analysis</div>
+        <h2>Pearson Correlation</h2>
+        <p>
+          This static figure presents four relationship patterns that share the same summary statistics
+          but tell very different visual stories, showing why visualization matters.
+        </p>
+      </div>
 
+      <div class="feature-card">
+        <div class="feature-card-content">
+          <h3>Why this figure matters</h3>
+          <p>
+            Looking only at numerical summaries can hide meaningful structure. This figure emphasizes
+            that visual inspection is essential for understanding outliers, clusters, and non-obvious patterns.
+          </p>
+        </div>
+        <div class="feature-image-wrap">
+          <img
+            class="feature-image"
+            src="images/Pearson correlation.png"
+            alt="Pearson correlation figure with four scatter plots"
+          />
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="visualizations">
+      <div class="section-header">
+        <div class="eyebrow">Interactive Work</div>
+        <h2>Explore the Visualizations</h2>
+        <p>
+          These projects extend the analysis with interactive views that allow visitors to open,
+          inspect, and explore the data more closely.
+        </p>
+      </div>
+
+      <div class="grid">
+        <article class="card">
+          <div class="card-tag">Interactive HTML</div>
+          <h3>Drug Heatmap</h3>
+          <p>
+            A heatmap-style visualization for exploring crime-related categories and their distribution
+            across the dataset.
+          </p>
+          <div class="card-links">
+            <a class="btn btn-primary" href="visualizations/drug_heatmap.html" target="_blank">Open Visualization</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-tag">Interactive HTML</div>
+          <h3>SF District Ratio</h3>
+          <p>
+            A district-level comparison view that helps show how patterns vary across San Francisco neighborhoods.
+          </p>
+          <div class="card-links">
+            <a class="btn btn-primary" href="visualizations/sf_district_ratio.html" target="_blank">Open Visualization</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="about">
+      <div class="section-header">
+        <div class="eyebrow">Project Notes</div>
+        <h2>About This Site</h2>
+        <p>
+          This page is designed as a responsive single-page portfolio that organizes analysis, visuals,
+          and navigation into a cleaner presentation.
+        </p>
+      </div>
+
+      <div class="about-grid">
+        <div class="about-box">
+          <h3>Design goals</h3>
+          <ul>
+            <li>Dark theme with teal accents for a modern dashboard feel.</li>
+            <li>Clear hierarchy with sections, cards, and strong headings.</li>
+            <li>Responsive layout that works on desktop and mobile.</li>
+            <li>Subtle hover effects and smooth scrolling for polish.</li>
+          </ul>
+        </div>
+
+        <div class="about-box">
+          <h3>Tools used</h3>
+          <p>
+            This site uses HTML and embedded CSS, plus exported visualization files hosted through GitHub Pages.
+            It serves as a lightweight portfolio for presenting data storytelling work on the web.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div>Built as a data visualization portfolio on GitHub Pages.</div>
+      <div><a class="text-link" href="#overview">Back to top ↑</a></div>
+    </div>
+  </footer>
 </body>
 </html>
